@@ -6,9 +6,12 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { LoggerService } from '../services/logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  constructor(private readonly logger: LoggerService) {}
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -20,7 +23,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const responseObj = exception.getResponse();
-
+      if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+        // Logging the message and stack trace as an object
+        this.logger.error(
+          'Unhandled exception caught',
+          exception instanceof Error ? exception.stack : '',
+        );
+      }
       if (typeof responseObj === 'object' && responseObj !== null) {
         message =
           (responseObj as { message: string }).message ||
