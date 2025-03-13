@@ -11,6 +11,7 @@ import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { XssSanitizationMiddleware } from './middleware/sanitization/xss-sanitization/xss-sanitization.middleware';
 import { LoggerModule } from 'nestjs-pino';
+import helmet from 'helmet';
 
 @Module({
   imports: [
@@ -45,5 +46,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     // Applying middleware globally to sanitize inputs
     consumer.apply(XssSanitizationMiddleware).forRoutes('*');
+    consumer.apply(helmet()).forRoutes('*');
   }
 }
