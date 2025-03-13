@@ -10,6 +10,7 @@ import { OrdersModule } from './orders/orders.module';
 import { AllExceptionsFilter } from './common/filters/all-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { XssSanitizationMiddleware } from './middleware/sanitization/xss-sanitization/xss-sanitization.middleware';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -18,6 +19,17 @@ import { XssSanitizationMiddleware } from './middleware/sanitization/xss-sanitiz
     ProductsModule,
     UsersModule,
     OrdersModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: process.env.NODE_ENV === 'production' ? 'warn' : 'debug',
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+          },
+        },
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [
