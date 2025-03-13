@@ -30,6 +30,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
           exception instanceof Error ? exception.stack : '',
         );
       }
+
+      if (status === HttpStatus.TOO_MANY_REQUESTS) {
+        message = 'Too many requests, please try again later.';
+      }
+
       if (typeof responseObj === 'object' && responseObj !== null) {
         message =
           (responseObj as { message: string }).message ||
