@@ -13,6 +13,7 @@ import { XssSanitizationMiddleware } from './middleware/sanitization/xss-sanitiz
 import { LoggerModule } from 'nestjs-pino';
 import helmet from 'helmet';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         limit: 10,
       },
     ]),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [
