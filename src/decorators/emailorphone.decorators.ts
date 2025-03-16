@@ -12,17 +12,17 @@ export function IsEmailOrPhone(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
-          // Handle undefined or null values
-          if (value === undefined || value === null) {
-            return false; // Fail validation if the field is missing
+        validate(value: unknown): boolean {
+          // Ensure value is a string
+          if (typeof value !== 'string') {
+            return false;
           }
 
           const isEmail = value.includes('@');
-          const isPhoneNumber = /^\+?[1-9]\d{1,14}$/.test(value); // E.164 format
+          const isPhoneNumber = /^\+?[1-9]\d{1,14}$/.test(value);
           return isEmail || isPhoneNumber;
         },
-        defaultMessage(args: ValidationArguments) {
+        defaultMessage(args: ValidationArguments): string {
           return `${args.property} must be a valid email or phone number`;
         },
       },

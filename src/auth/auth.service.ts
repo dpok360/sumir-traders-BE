@@ -53,7 +53,7 @@ export class AuthService {
   async validateUserById(userId: string): Promise<User | null> {
     const user = await this.usersService.findById(userId);
     if (!user) {
-      throw new NotFoundException('User with ID  not found');
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
     return user;
   }

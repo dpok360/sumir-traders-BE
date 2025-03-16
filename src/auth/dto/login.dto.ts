@@ -1,13 +1,15 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsDefined } from 'class-validator';
 import { IsEmailOrPhone } from '../../decorators/emailorphone.decorators';
 
 export class LoginDto {
   @IsString()
   @IsNotEmpty()
-  @IsEmailOrPhone() // Use the custom decorator
-  emailOrPhoneNumber: string;
+  @IsDefined()
+  @IsEmailOrPhone()
+  emailOrPhoneNumber?: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  @IsDefined()
+  password?: string;
 }
