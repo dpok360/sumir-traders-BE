@@ -6,20 +6,19 @@ import { UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 
-jest.mock('bcryptjs');
-
+jest.mock('bcryptjs', () => ({
+  hash: jest.fn(),
+  compare: jest.fn(),
+}));
 describe('AuthService', () => {
   let authService: AuthService;
-  let usersService: UsersService;
   const mockBcryptCompare = bcrypt.compare as jest.Mock;
-
-  // Mock UsersService
+  const mockBcryptHash = bcrypt.hash as jest.MockedFunction<typeof bcrypt.hash>;
   const mockUsersService = {
     findOne: jest.fn(),
     findById: jest.fn(),
   };
 
-  // Mock JwtService
   const mockJwtService = {
     sign: jest.fn().mockReturnValue('mockJwtToken'),
   };
@@ -34,11 +33,10 @@ describe('AuthService', () => {
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
-    usersService = module.get<UsersService>(UsersService);
   });
 
   afterEach(() => {
-    jest.clearAllMocks(); // Clear mocks after each test
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -117,10 +115,7 @@ describe('AuthService', () => {
   it('should mock bcrypt.hash correctly', async () => {
     const userId = '12345';
     const hashedUserId = 'hashed12345';
-    const bcryptHashMock = bcrypt.hash as jest.MockedFunction<
-      typeof bcrypt.hash
-    >;
-    bcryptHashMock.mockResolvedValue(hashedUserId);
+    mockBcryptHash.mockResolvedValue(hashedUserId);
 
     const token = await authService.generateAccessToken(userId);
 

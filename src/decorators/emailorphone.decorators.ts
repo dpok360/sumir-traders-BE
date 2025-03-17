@@ -13,13 +13,15 @@ export function IsEmailOrPhone(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: unknown): boolean {
-          // Ensure value is a string
           if (typeof value !== 'string') {
             return false;
           }
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const isEmail = emailRegex.test(value);
 
-          const isEmail = value.includes('@');
-          const isPhoneNumber = /^\+?[1-9]\d{1,14}$/.test(value);
+          const phoneRegex = /^\+9779\d{8}$/;
+          const isPhoneNumber = phoneRegex.test(value);
+
           return isEmail || isPhoneNumber;
         },
         defaultMessage(args: ValidationArguments): string {

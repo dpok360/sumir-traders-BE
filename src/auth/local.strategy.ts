@@ -13,7 +13,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // The validate method is where we validate the user
   async validate(
     phoneOrEmail: string,
     plainTextPassword: string,

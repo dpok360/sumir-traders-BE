@@ -57,7 +57,6 @@ import { PrismaModule } from './prisma/prisma.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // Applying middleware globally to sanitize inputs
     consumer.apply(XssSanitizationMiddleware).forRoutes('*');
     consumer.apply(helmet()).forRoutes('*');
   }

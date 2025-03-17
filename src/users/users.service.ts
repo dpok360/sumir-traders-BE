@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
-import { User, Prisma } from '@prisma/client';
+import { User } from '@prisma/client';
+import { CreateUserDto } from './dto/user.dto';
+import { UserWithoutPassword } from 'types';
 
 @Injectable()
 export class UsersService {
@@ -36,26 +37,32 @@ export class UsersService {
     return user;
   }
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    const existingUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
-      },
-    });
-
-    if (existingUser) {
-      throw new HttpException(
-        'User with the same email or phone number already exists',
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    return this.prisma.user.create({
+  async createUser(
+    createUserDto: CreateUserDto,
+    hashedPassword: string,
+  ): Promise<UserWithoutPassword | null> {
+    const user = await this.prisma.user.create({
       data: {
-        ...data,
+        ...createUserDto,
         password: hashedPassword,
       },
     });
+    // eslint-disable-next-line no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
+  }
+
+  async findUserByEmailOrPhone(
+    email: string,
+    phoneNumber: string,
+  ): Promise<boolean> {
+    const userExist = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { phoneNumber }],
+      },
+    });
+
+    return !!userExist;
   }
 }
