@@ -4,12 +4,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { User } from '@prisma/client';
 import { SignUpResponse } from 'types';
-import { SignUpDto } from './dto/signUp.dto';
+import { SignUpDto } from 'auth/dto/signUp.dto';
+import { UsersService } from 'users/users.service';
 
 @Injectable()
 export class AuthService {
