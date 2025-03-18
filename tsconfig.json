@@ -6,7 +6,7 @@
     "paths": {
       "*": [
         "*"
-      ]
+      ],
     },
     "outDir": "./dist",
     "skipLibCheck": true,
@@ -24,6 +24,9 @@
     "noUnusedParameters": true,
     "skipDefaultLibCheck": true
   },
+  "esModuleInterop": true,
+  "strict": true,
+  "skipLibCheck": true,
   "include": [
     "src/**/*"
   ]
