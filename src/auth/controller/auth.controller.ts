@@ -1,15 +1,23 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
 import { SignUpDto } from '../dto/signUp.dto';
 import { SignUpResponse } from 'types';
 import { AuthService } from 'auth/services/auth.service';
+import { Response } from 'express';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
+  async login(@Body() loginDto: LoginDto, @Res() res: Response): Promise<void> {
     const { emailOrPhoneNumber, password } = loginDto;
     if (!emailOrPhoneNumber || !password) {
       throw new UnauthorizedException(
@@ -23,7 +31,15 @@ export class AuthController {
     );
 
     const accessToken = await this.authService.generateAccessToken(user!.id);
-    return { accessToken };
+    res.cookie('sumir-trader', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'strict',
+    });
+    res
+      .status(HttpStatus.OK)
+      .json({ status: 'success', message: 'Login Successfull' });
   }
 
   @Post('signup')
