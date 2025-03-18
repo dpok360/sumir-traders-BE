@@ -20,7 +20,10 @@ export class AuthService {
 
   async generateAccessToken(userId: string): Promise<string> {
     const hashedUserId = await bcrypt.hash(userId, 10);
-    const token: string = this.jwtService.sign({ sub: hashedUserId });
+    const token: string = this.jwtService.sign(
+      { sub: hashedUserId },
+      { expiresIn: '7d' },
+    );
     return token;
   }
 
